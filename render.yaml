@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: arogyalink-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CLIENT_URL
+        value: '*'
+      - key: SUPABASE_URL
+        value: https://eofqzapaauvvhsfypgbw.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: sb_publishable_Zfj_09FsBZl7HUm4m8S1Bg__fSv-HJF
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: sb_secret_Ms4IjOxIKGyw2oUjAVFjVQ_uV46_40j
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GEMINI_API_KEY
+        value: AQ.Ab8RN6KleqAhgYaBNHIPQcQHpSTFuq2IfWnkRUHhUwoZq1ePDw
+      - key: OCR_AI_PROVIDER
+        value: google
+      - key: OCR_AI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: OCR_AI_API_KEY
+        value: AQ.Ab8RN6KjGuoVIwYBkJOELLmOaRWBOmD9PU_u2sooOrNi7x-B0A
+      - key: MEDICATION_AI_PROVIDER
+        value: google
+      - key: MEDICATION_AI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: MEDICATION_AI_API_KEY
+        value: AQ.Ab8RN6KaTQyQAkGQ1BEhtJMCGcohUd0XUkSBtfm8ofpifwMY4g
+      - key: ASSISTANT_AI_PROVIDER
+        value: google
+      - key: ASSISTANT_AI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: ASSISTANT_AI_API_KEY
+        value: AQ.Ab8RN6KleqAhgYaBNHIPQcQHpSTFuq2IfWnkRUHhUwoZq1ePDw

@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # -----------------------------------------------------------
+  # BACKEND SERVICE (Express + Supabase + Multi-Agent AI + Schedulers)
+  # -----------------------------------------------------------
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: arogyalink-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - CLIENT_URL=http://localhost:3000
+      - SUPABASE_URL=https://eofqzapaauvvhsfypgbw.supabase.co
+      - SUPABASE_ANON_KEY=sb_publishable_Zfj_09FsBZl7HUm4m8S1Bg__fSv-HJF
+      - SUPABASE_SERVICE_ROLE_KEY=sb_secret_Ms4IjOxIKGyw2oUjAVFjVQ_uV46_40j
+      - GEMINI_MODEL=gemini-3.5-flash-lite
+      - GEMINI_API_KEY=AQ.Ab8RN6KleqAhgYaBNHIPQcQHpSTFuq2IfWnkRUHhUwoZq1ePDw
+      - OCR_AI_PROVIDER=google
+      - OCR_AI_MODEL=gemini-3.5-flash-lite
+      - OCR_AI_API_KEY=AQ.Ab8RN6KjGuoVIwYBkJOELLmOaRWBOmD9PU_u2sooOrNi7x-B0A
+      - MEDICATION_AI_PROVIDER=google
+      - MEDICATION_AI_MODEL=gemini-3.5-flash-lite
+      - MEDICATION_AI_API_KEY=AQ.Ab8RN6KaTQyQAkGQ1BEhtJMCGcohUd0XUkSBtfm8ofpifwMY4g
+      - ASSISTANT_AI_PROVIDER=google
+      - ASSISTANT_AI_MODEL=gemini-3.5-flash-lite
+      - ASSISTANT_AI_API_KEY=AQ.Ab8RN6KleqAhgYaBNHIPQcQHpSTFuq2IfWnkRUHhUwoZq1ePDw
+    networks:
+      - arogyalink-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # -----------------------------------------------------------
+  # FRONTEND SERVICE (Next.js 14 + Tailwind + TypeScript)
+  # -----------------------------------------------------------
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+    container_name: arogyalink-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+      - BACKEND_URL=http://backend:5000
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - arogyalink-net
+
+networks:
+  arogyalink-net:
+    driver: bridge
