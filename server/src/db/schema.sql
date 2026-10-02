@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS patients (
     phone VARCHAR(30),
     date_of_birth DATE,
     conditions TEXT[],
+    abha_id VARCHAR(19),
+    abha_address VARCHAR(100),
+    medical_history TEXT[] DEFAULT '{}',
+    doctor_name VARCHAR(200),
+    doctor_id VARCHAR(100),
+    doctor_hospital TEXT,
+    doctor_email VARCHAR(255),
+    doctor_phone VARCHAR(30),
+    onboarding_completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

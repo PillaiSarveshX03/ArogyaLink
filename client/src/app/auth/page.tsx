@@ -54,7 +54,14 @@ export default function AuthPage() {
     setIsLoading(false);
 
     if (success) {
-      router.push('/');
+      // Check if patient onboarding is pending
+      const stored = typeof window !== 'undefined' ? localStorage.getItem('arogyalink_user') : null;
+      const parsed = stored ? JSON.parse(stored) : null;
+      if (parsed && parsed.role === 'patient' && !parsed.onboardingCompleted) {
+        router.push('/onboarding');
+      } else {
+        router.push('/');
+      }
     } else {
       setErrorMessage('Invalid credentials. Please verify your email and password.');
     }
@@ -86,13 +93,17 @@ export default function AuthPage() {
       email: signupEmail,
       password: signupPassword,
       role,
-      conditions: selectedConditions
+      conditions: []
     });
 
     setIsLoading(false);
 
     if (success) {
-      router.push('/');
+      if (role === 'patient') {
+        router.push('/onboarding');
+      } else {
+        router.push('/');
+      }
     } else {
       setErrorMessage('Failed to create account. Please check your details and try again.');
     }
@@ -312,32 +323,15 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              {/* Health Conditions Tag Selector (for Patients) */}
               {role === 'patient' && (
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
-                    Primary Health Focus (Select all that apply)
-                  </label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {availableConditions.map((cond) => {
-                      const isSelected = selectedConditions.includes(cond);
-                      return (
-                        <button
-                          key={cond}
-                          type="button"
-                          onClick={() => toggleCondition(cond)}
-                          className={`text-[11px] px-2.5 py-1 rounded-lg border font-semibold transition cursor-pointer ${
-                            isSelected
-                              ? 'bg-sky-600 border-sky-600 text-white'
-                              : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                          }`}
-                        >
-                          {isSelected && '✓ '}
-                          {cond}
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="bg-sky-50/70 p-3 rounded-xl border border-sky-100 text-xs text-sky-900 space-y-1">
+                  <p className="font-bold flex items-center gap-1.5 text-sky-800">
+                    <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+                    Dedicated First-Time Onboarding
+                  </p>
+                  <p className="text-[11px] text-slate-600">
+                    After registration, you will be guided to set up your official ABHA health ID, Date of Birth, and primary family doctor contacts.
+                  </p>
                 </div>
               )}
 
@@ -360,8 +354,8 @@ export default function AuthPage() {
                 disabled={isLoading}
                 className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
               >
-                {isLoading ? 'Creating Account...' : 'Complete Registration'}
-                <CheckCircle2 className="w-4 h-4" />
+                {isLoading ? 'Creating Account...' : (role === 'patient' ? 'Proceed to Patient Onboarding' : 'Complete Registration')}
+                <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           )}

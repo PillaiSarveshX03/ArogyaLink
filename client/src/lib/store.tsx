@@ -24,7 +24,7 @@ import {
 import { apiClient } from './api';
 
 const emptyMetrics: AdherenceMetrics = {
-  adherencePercentage: 100,
+  adherencePercentage: 0,
   lastWeekDelta: 0,
   dosesTakenToday: 0,
   dosesTotalToday: 0,
@@ -86,8 +86,12 @@ interface AppContextType {
 
   // Caregivers
   caregivers: CaregiverConsent[];
+  addCaregiver: (caregiver: Omit<CaregiverConsent, 'id'>) => Promise<void>;
+  updateCaregiver: (id: string, updates: Partial<CaregiverConsent>) => Promise<void>;
+  removeCaregiver: (id: string) => Promise<void>;
   toggleCaregiverConsent: (id: string, granted: boolean) => void;
   updateCaregiverRules: (id: string, rules: Partial<CaregiverConsent>) => void;
+  completeOnboarding: (data: Partial<UserProfile>) => Promise<boolean>;
 
   // Activity Log
   activities: ActivityLog[];
@@ -220,8 +224,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (typeof window !== 'undefined') {
         localStorage.setItem('arogyalink_user', JSON.stringify(updated));
       }
+      if (updated.id) {
+        apiClient.updateProfile(updated.id, data).catch(console.warn);
+      }
       return updated;
     });
+  };
+
+  const completeOnboarding = async (data: Partial<UserProfile>): Promise<boolean> => {
+    if (!user) return false;
+    const updated: UserProfile = {
+      ...user,
+      ...data,
+      onboardingCompleted: true,
+    };
+    setUser(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('arogyalink_user', JSON.stringify(updated));
+      localStorage.removeItem('arogyalink_onboarding_draft');
+    }
+    try {
+      await apiClient.updateProfile(user.id, {
+        ...data,
+        onboardingCompleted: true,
+      });
+      return true;
+    } catch (err) {
+      console.warn('Failed to sync completed onboarding to backend:', err);
+      return true; // Still true locally
+    }
   };
 
   const loginUser = async (email: string, password?: string): Promise<boolean> => {
@@ -371,8 +402,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const title = isTaken
         ? 'Dose Taken Successfully'
         : isMissed
-        ? 'Missed Dose Detected'
-        : 'Dose Skipped';
+          ? 'Missed Dose Detected'
+          : 'Dose Skipped';
 
       const desc = `${targetDose.medicineName} (${targetDose.scheduledTime}) marked as ${newStatus}`;
 
@@ -464,22 +495,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setInsights((prev) => prev.filter((i) => i.id !== id));
   };
 
+  const addCaregiver = async (cgData: Omit<CaregiverConsent, 'id'>) => {
+    const newCg: CaregiverConsent = {
+      ...cgData,
+      id: `cg-${Date.now()}`,
+      patientId: user?.id,
+      consentGranted: cgData.consentGranted ?? true,
+      grantedAt: cgData.consentGranted ? new Date().toLocaleString() : undefined,
+      notifyOnMissedDose: cgData.notifyOnMissedDose ?? true,
+      notifyAfterMinutes: cgData.notifyAfterMinutes || 45,
+      notifyOnLowStock: cgData.notifyOnLowStock ?? true,
+    };
+    const updated = [...caregivers, newCg];
+    updateCaregiversForUser(updated);
+    if (user?.id) {
+      apiClient.addCaregiver(user.id, newCg).catch(console.warn);
+    }
+  };
+
+  const updateCaregiver = async (id: string, updates: Partial<CaregiverConsent>) => {
+    const updated = caregivers.map((cg) => (cg.id === id ? { ...cg, ...updates } : cg));
+    updateCaregiversForUser(updated);
+    if (user?.id) {
+      apiClient.updateCaregiver(user.id, id, updates).catch(console.warn);
+    }
+  };
+
+  const removeCaregiver = async (id: string) => {
+    const updated = caregivers.filter((cg) => cg.id !== id);
+    updateCaregiversForUser(updated);
+    if (user?.id) {
+      apiClient.deleteCaregiver(user.id, id).catch(console.warn);
+    }
+  };
+
   const toggleCaregiverConsent = (id: string, granted: boolean) => {
     const updated = caregivers.map((cg) =>
       cg.id === id
         ? {
-            ...cg,
-            consentGranted: granted,
-            grantedAt: granted ? new Date().toLocaleString() : undefined,
-          }
+          ...cg,
+          consentGranted: granted,
+          grantedAt: granted ? new Date().toLocaleString() : undefined,
+        }
         : cg
     );
     updateCaregiversForUser(updated);
+    if (user?.id) {
+      apiClient.updateCaregiver(user.id, id, {
+        consentGranted: granted,
+        grantedAt: granted ? new Date().toISOString() : undefined,
+      }).catch(console.warn);
+    }
   };
 
   const updateCaregiverRules = (id: string, rules: Partial<CaregiverConsent>) => {
     const updated = caregivers.map((cg) => (cg.id === id ? { ...cg, ...rules } : cg));
     updateCaregiversForUser(updated);
+    if (user?.id) {
+      apiClient.updateCaregiver(user.id, id, rules).catch(console.warn);
+    }
   };
 
   const nextPendingDose = doseEvents.find((d) => d.status === 'pending');
@@ -492,6 +566,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isProfileModalOpen,
         setProfileModalOpen,
         updateProfile,
+        completeOnboarding,
         loginUser,
         registerUser,
         logoutUser,
@@ -509,6 +584,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         insights,
         dismissInsight,
         caregivers,
+        addCaregiver,
+        updateCaregiver,
+        removeCaregiver,
         toggleCaregiverConsent,
         updateCaregiverRules,
         activities,

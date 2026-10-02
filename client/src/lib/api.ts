@@ -34,16 +34,38 @@ export const apiClient = {
       if (!res.ok) throw new Error('Login failed');
       return await res.json();
     } catch {
-      // Fallback
+      const isDemo = credentials.email.includes('rahul') || credentials.email.includes('demo');
+      if (isDemo) {
+        return {
+          success: true,
+          user: {
+            id: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+            name: 'Rahul Sharma',
+            email: 'rahul.sharma@example.com',
+            role: 'patient',
+            conditions: ['Type 2 Diabetes', 'Essential Hypertension'],
+            medicalHistory: [
+              'Type 2 Diabetes Mellitus (Diagnosed 2021)',
+              'Essential Hypertension (Diagnosed 2019)'
+            ],
+            adherenceRate: 92,
+            onboardingCompleted: true
+          }
+        };
+      }
+
+      // Fallback for new user credentials - clean empty state
       return {
         success: true,
         user: {
-          id: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+          id: `user-${Date.now()}`,
           name: credentials.email.split('@')[0],
           email: credentials.email,
           role: 'patient',
-          conditions: ['Type 2 Diabetes', 'Hypertension'],
-          adherenceRate: 92
+          conditions: [],
+          medicalHistory: [],
+          adherenceRate: 100,
+          onboardingCompleted: false
         }
       };
     }
@@ -59,7 +81,7 @@ export const apiClient = {
       if (!res.ok) throw new Error('Registration failed');
       return await res.json();
     } catch {
-      // Fallback
+      // Fallback clean state for newly registered account
       return {
         success: true,
         user: {
@@ -67,8 +89,10 @@ export const apiClient = {
           name: userData.name,
           email: userData.email,
           role: userData.role || 'patient',
-          conditions: userData.conditions || ['General Care'],
-          adherenceRate: 100
+          conditions: userData.conditions || [],
+          medicalHistory: [],
+          adherenceRate: 100,
+          onboardingCompleted: false
         }
       };
     }
@@ -346,6 +370,125 @@ export const apiClient = {
   async deleteCourse(patientId: string, courseId: string): Promise<any> {
     try {
       const res = await fetch(`${API_BASE}/patients/${patientId}/courses/${courseId}`, {
+        method: 'DELETE',
+      });
+      return await res.json();
+    } catch {
+      return { success: true };
+    }
+  },
+
+  // Patient Profile & Onboarding
+  async updateProfile(patientId: string, profileData: any): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/profile`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      });
+      if (!res.ok) throw new Error('Update profile failed');
+      return await res.json();
+    } catch (err: any) {
+      console.warn('API update profile fallback:', err.message);
+      return { success: true, profile: profileData };
+    }
+  },
+
+  async uploadAvatar(patientId: string, avatarBase64: string, fileName?: string): Promise<{ success: boolean; avatarUrl?: string; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarBase64, fileName: fileName || 'avatar.png' }),
+      });
+      if (!res.ok) throw new Error('Avatar upload failed');
+      return await res.json();
+    } catch (err: any) {
+      console.warn('API upload avatar fallback:', err.message);
+      return { success: true, avatarUrl: avatarBase64 };
+    }
+  },
+
+  // ABHA Simulation Demo Fetch
+  async simulateAbhaFetch(credentials: { abhaId?: string; abhaAddress?: string }): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/abha/simulate-fetch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+      if (!res.ok) throw new Error('ABHA simulation failed');
+      return await res.json();
+    } catch {
+      return {
+        success: true,
+        verifiedStatus: 'ABDM_VERIFIED_SANDBOX',
+        gatewayTransactionId: `ABDM-TX-${Date.now()}`,
+        abhaId: credentials.abhaId || '91-4452-9812-4301',
+        abhaAddress: credentials.abhaAddress || 'rahul.sharma@abdm',
+        patientName: 'Rahul Sharma',
+        dateOfBirth: '1984-06-15',
+        gender: 'Male',
+        bloodGroup: 'B+',
+        medicalHistory: [
+          'Type 2 Diabetes Mellitus (ICD-10 E11, Diagnosed 2021)',
+          'Essential Hypertension (ICD-10 I10, Diagnosed 2019)',
+          'Severe Penicillin Drug Allergy (Documented 2018)',
+          'Appendectomy (Surgical History, 2015)'
+        ],
+        primaryDoctor: {
+          name: 'Dr. Alok Verma',
+          registrationId: 'DMC-24981',
+          hospitalAddress: 'Apollo Health City, Sarita Vihar, New Delhi',
+          email: 'dr.verma@apollohospitals.example',
+          phone: '+91 98110 55432'
+        }
+      };
+    }
+  },
+
+  // Caregivers CRUD
+  async getCaregivers(patientId: string): Promise<CaregiverConsent[]> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/caregivers`);
+      if (!res.ok) throw new Error('Get caregivers failed');
+      return await res.json();
+    } catch {
+      return [];
+    }
+  },
+
+  async addCaregiver(patientId: string, caregiver: Partial<CaregiverConsent>): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/caregivers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(caregiver),
+      });
+      if (!res.ok) throw new Error('Add caregiver failed');
+      return await res.json();
+    } catch {
+      return { id: `cg-${Date.now()}`, ...caregiver };
+    }
+  },
+
+  async updateCaregiver(patientId: string, caregiverId: string, updates: Partial<CaregiverConsent>): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/caregivers/${caregiverId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) throw new Error('Update caregiver failed');
+      return await res.json();
+    } catch {
+      return { id: caregiverId, ...updates };
+    }
+  },
+
+  async deleteCaregiver(patientId: string, caregiverId: string): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/patients/${patientId}/caregivers/${caregiverId}`, {
         method: 'DELETE',
       });
       return await res.json();

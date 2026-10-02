@@ -12,12 +12,24 @@ export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children })
   const router = useRouter();
 
   const isAuthPage = pathname === '/auth';
+  const isOnboardingPage = pathname === '/onboarding';
 
   useEffect(() => {
-    if (authInitialized && !user && !isAuthPage) {
-      router.push('/auth');
+    if (authInitialized) {
+      if (!user && !isAuthPage) {
+        router.push('/auth');
+      } else if (
+        user &&
+        user.role === 'patient' &&
+        !user.onboardingCompleted &&
+        !isOnboardingPage &&
+        !isAuthPage
+      ) {
+        // Abandonment Rule: If mandatory onboarding not completed, force redirect to /onboarding
+        router.push('/onboarding');
+      }
     }
-  }, [user, authInitialized, isAuthPage, router]);
+  }, [user, authInitialized, isAuthPage, isOnboardingPage, router]);
 
   // While checking local storage session on initial mount
   if (!authInitialized) {

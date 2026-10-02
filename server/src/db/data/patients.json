@@ -1,0 +1,135 @@
+{
+  "515726fa-ea47-4454-9db8-f0d0c7a5c2c2": {
+    "id": "515726fa-ea47-4454-9db8-f0d0c7a5c2c2",
+    "first_name": "Sarvesh",
+    "last_name": "Kumar Pillai",
+    "name": "Sarvesh Kumar Pillai",
+    "email": "test_patient_1790968398206@example.com",
+    "phone": "+91 98765 43210",
+    "dateOfBirth": "2003-05-15",
+    "conditions": [],
+    "medicalHistory": [],
+    "abhaId": "91-4452-9812-4301",
+    "abhaAddress": "sarvesh@abdm",
+    "doctorName": "Dr. Sunita Rao",
+    "doctorId": "",
+    "doctorHospital": "Fortis Hospital",
+    "doctorEmail": "dr.rao@fortis.example",
+    "doctorPhone": "+91 98111 22334",
+    "doctor": {
+      "name": "Dr. Sunita Rao",
+      "registrationId": "",
+      "hospitalAddress": "Fortis Hospital",
+      "email": "dr.rao@fortis.example",
+      "phone": "+91 98111 22334"
+    },
+    "avatarUrl": "https://eofqzapaauvvhsfypgbw.supabase.co/storage/v1/object/public/avatars/515726fa-ea47-4454-9db8-f0d0c7a5c2c2-1790968399189.png",
+    "onboardingCompleted": true,
+    "adherenceRate": 92
+  },
+  "dc40ad35-a609-420e-8302-5584f238e1af": {
+    "id": "dc40ad35-a609-420e-8302-5584f238e1af",
+    "first_name": "Sarvesh",
+    "last_name": "Pillai",
+    "name": "Sarvesh Pillai",
+    "email": "pillai@gmail.com",
+    "phone": "+91 98765 43210",
+    "dateOfBirth": "2003-05-15",
+    "conditions": [
+      "General Health Adherence"
+    ],
+    "medicalHistory": [
+      "Hypertension"
+    ],
+    "abhaId": "91-4452-9812-4301",
+    "abhaAddress": "sarvesh.pillai@abdm",
+    "doctorName": "Dr. Sharma",
+    "doctorId": "",
+    "doctorHospital": "City Clinic",
+    "doctorEmail": "doctor@cityclinic.com",
+    "doctorPhone": "+91 98111 22233",
+    "doctor": {
+      "name": "Dr. Sharma",
+      "hospitalAddress": "City Clinic",
+      "email": "doctor@cityclinic.com",
+      "phone": "+91 98111 22233"
+    },
+    "avatarUrl": "https://example.com/avatar.png",
+    "onboardingCompleted": true,
+    "adherenceRate": 92
+  },
+  "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d": {
+    "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "first_name": "Rahul",
+    "last_name": "Sharma",
+    "name": "Rahul Sharma",
+    "email": "rahul.sharma@example.com",
+    "phone": "",
+    "dateOfBirth": "",
+    "conditions": [
+      "Type 2 Diabetes",
+      "Essential Hypertension"
+    ],
+    "medicalHistory": [],
+    "abhaId": "",
+    "abhaAddress": "",
+    "doctorName": "",
+    "doctorId": "",
+    "doctorHospital": "",
+    "doctorEmail": "",
+    "doctorPhone": "",
+    "avatarUrl": "",
+    "onboardingCompleted": false,
+    "adherenceRate": 92
+  },
+  "user-1790968995289": {
+    "id": "user-1790968995289",
+    "name": "Sarvesh Test",
+    "email": "test3@rediffmail.com",
+    "role": "patient",
+    "conditions": [],
+    "medicalHistory": [
+      "Type 2 Diabetes Mellitus (ICD-10 E11, Diagnosed 2021)",
+      "Essential Hypertension (ICD-10 I10, Diagnosed 2019)",
+      "Severe Penicillin Drug Allergy (Documented 2018)",
+      "Appendectomy (Surgical History, 2015)"
+    ],
+    "adherenceRate": 100,
+    "avatarUrl": "",
+    "onboardingCompleted": true,
+    "dateOfBirth": "2007-11-03",
+    "phone": "+91 4524524578",
+    "bloodGroup": "O+",
+    "abhaId": "24-5245-2742-4452",
+    "abhaAddress": "24452782@abdm",
+    "doctorName": "Dr. Alok Verma",
+    "doctorId": "DMC-24981",
+    "doctorHospital": "Apollo Health City, Sarita Vihar, New Delhi",
+    "doctorEmail": "dr.verma@apollohospitals.example",
+    "doctorPhone": "+91 98110 55432",
+    "doctor": {
+      "name": "Dr. Alok Verma",
+      "registrationId": "DMC-24981",
+      "hospitalAddress": "Apollo Health City, Sarita Vihar, New Delhi",
+      "email": "dr.verma@apollohospitals.example",
+      "phone": "+91 98110 55432"
+    },
+    "updated_at": "2026-10-02T19:27:13.310Z",
+    "first_name": "Sarvesh",
+    "last_name": "Test",
+    "doctorSpecialty": "",
+    "emergencyContact": "",
+    "allergies": []
+  },
+  "user-1790969414026": {
+    "id": "user-1790969414026",
+    "name": "Krishnakumari",
+    "email": "test4@gmail.com",
+    "role": "caregiver",
+    "conditions": [],
+    "medicalHistory": [],
+    "adherenceRate": 100,
+    "avatarUrl": "",
+    "onboardingCompleted": false
+  }
+}

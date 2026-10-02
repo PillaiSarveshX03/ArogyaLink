@@ -1,5 +1,13 @@
 export type DoseStatus = 'pending' | 'taken' | 'missed' | 'skipped';
 
+export interface DoctorProfile {
+  name: string;             // Required
+  registrationId?: string;  // Optional (e.g. State Medical Council ID)
+  hospitalAddress: string;  // Required
+  email: string;            // Required for emergency alerts
+  phone: string;            // Required with country code (+91)
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -7,9 +15,22 @@ export interface UserProfile {
   role: 'patient' | 'caregiver';
   phone?: string;
   dateOfBirth?: string;
+  onboardingCompleted?: boolean;
+  avatarUrl?: string;
+
+  // ABHA National Health Authority Credentials
+  abhaId?: string;          // 14-digit identifier: XX-XXXX-XXXX-XXXX
+  abhaAddress?: string;     // String identifier: username@abdm
+
+  // Family Doctor Details
   doctorName?: string;
+  doctorId?: string;        // Registration number
   doctorSpecialty?: string;
   doctorHospital?: string;
+  doctorEmail?: string;
+  doctorPhone?: string;
+  doctor?: DoctorProfile;
+
   emergencyContact?: string;
   bloodGroup?: string;
   conditions?: string[];
@@ -183,6 +204,7 @@ export interface StructuredMedicationAnalysis {
 
 export interface CaregiverConsent {
   id: string;
+  patientId?: string;
   name: string;
   relation: string;
   phone: string;

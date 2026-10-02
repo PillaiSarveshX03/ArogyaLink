@@ -36,8 +36,8 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.use('/api/health', healthRoutes);
@@ -52,7 +52,7 @@ app.use('/api/reminders', remindersRoutes);
 app.get('/', (req, res) => {
   res.json({
     message: 'AI-Powered Medication Management Backend is running',
-    version: '1.0.0',
+    version: '1.1.0',
     endpoints: [
       '/api/health',
       '/api/auth',

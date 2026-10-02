@@ -29,7 +29,7 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
-          
+
           {/* Logo only in Navbar as requested */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group py-1">
@@ -44,8 +44,8 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links (Only shown when logged in) */}
-          {user && (
+          {/* Desktop Navigation Links (Only shown when logged in and onboarded) */}
+          {user && user.onboardingCompleted && (
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -54,11 +54,10 @@ export const Navbar: React.FC = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? 'bg-sky-50 text-sky-700 font-semibold shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
-                    }`}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${isActive
+                      ? 'bg-sky-50 text-sky-700 font-semibold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      }`}
                   >
                     <Icon className={`w-4 h-4 ${isActive ? 'text-sky-600' : 'text-slate-600'}`} />
                     {item.label}
@@ -66,6 +65,12 @@ export const Navbar: React.FC = () => {
                 );
               })}
             </nav>
+          )}
+
+          {pathname === '/onboarding' && (
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded-full text-xs font-bold">
+              Patient Onboarding
+            </div>
           )}
 
           {/* Right Header Actions */}
@@ -114,8 +119,12 @@ export const Navbar: React.FC = () => {
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center gap-2 group cursor-pointer focus:outline-hidden"
                 >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs ring-2 ring-sky-100 overflow-hidden">
-                    <span className="text-[10px] sm:text-xs font-bold">{initials}</span>
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs ring-2 ring-sky-100 overflow-hidden relative">
+                    {user.avatarUrl ? (
+                      <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] sm:text-xs font-bold">{initials}</span>
+                    )}
                   </div>
                   <div className="hidden lg:block text-left text-xs leading-tight">
                     <p className="font-semibold text-slate-800 flex items-center gap-1">

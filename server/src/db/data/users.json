@@ -1,0 +1,52 @@
+{
+  "test3@rediffmail.com": {
+    "id": "user-1790968995289",
+    "name": "Sarvesh Test",
+    "email": "test3@rediffmail.com",
+    "role": "patient",
+    "conditions": [],
+    "medicalHistory": [
+      "Type 2 Diabetes Mellitus (ICD-10 E11, Diagnosed 2021)",
+      "Essential Hypertension (ICD-10 I10, Diagnosed 2019)",
+      "Severe Penicillin Drug Allergy (Documented 2018)",
+      "Appendectomy (Surgical History, 2015)"
+    ],
+    "adherenceRate": 100,
+    "avatarUrl": "",
+    "onboardingCompleted": true,
+    "dateOfBirth": "2007-11-03",
+    "phone": "+91 4524524578",
+    "bloodGroup": "O+",
+    "abhaId": "24-5245-2742-4452",
+    "abhaAddress": "24452782@abdm",
+    "doctorName": "Dr. Alok Verma",
+    "doctorId": "DMC-24981",
+    "doctorHospital": "Apollo Health City, Sarita Vihar, New Delhi",
+    "doctorEmail": "dr.verma@apollohospitals.example",
+    "doctorPhone": "+91 98110 55432",
+    "doctor": {
+      "name": "Dr. Alok Verma",
+      "registrationId": "DMC-24981",
+      "hospitalAddress": "Apollo Health City, Sarita Vihar, New Delhi",
+      "email": "dr.verma@apollohospitals.example",
+      "phone": "+91 98110 55432"
+    },
+    "updated_at": "2026-10-02T19:27:13.310Z",
+    "first_name": "Sarvesh",
+    "last_name": "Test",
+    "doctorSpecialty": "",
+    "emergencyContact": "",
+    "allergies": []
+  },
+  "test4@gmail.com": {
+    "id": "user-1790969414026",
+    "name": "Krishnakumari",
+    "email": "test4@gmail.com",
+    "role": "caregiver",
+    "conditions": [],
+    "medicalHistory": [],
+    "adherenceRate": 100,
+    "avatarUrl": "",
+    "onboardingCompleted": false
+  }
+}
